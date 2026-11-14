@@ -1,0 +1,20 @@
+
+# Python temporary files
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# API keys and secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Local settings
+.vscode/
+.DS_Store
