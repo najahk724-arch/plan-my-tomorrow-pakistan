@@ -8,6 +8,7 @@ from app.forecast import search_pakistan, fetch_tomorrow, DataUnavailable
 
 
 def request(**kwargs):
+    kwargs.setdefault("activity", "run")
     return PlanRequest(location=Location(name="Lahore", latitude=31.558,
                                          longitude=74.351), **kwargs)
 
@@ -26,7 +27,7 @@ def fixture(aqi=55, gust=8, code=0, rain_prob=2, rainfall=0.0, feels=24):
             "fetched_at": f"{date}T00:00:00+05:00"}
 
 
-def test_valid_walk_returns_time_and_backup():
+def test_valid_run_returns_time_and_backup():
     result = make_plan(request(earliest_start_hour=16, latest_finish_hour=20), fixture())
     assert result["best"]["start_hour"] == 16
     assert result["backup"]["start_hour"] == 17
@@ -116,10 +117,13 @@ def test_api_plan_mocked_forecast(monkeypatch):
     async def fake_fetch(latitude, longitude, client):
         return fixture()
     monkeypatch.setattr(routes, "fetch_tomorrow", fake_fetch)
+    async def fake_multi_city_ai(client, latitude, longitude):
+        return {"status": "unavailable"}
+    monkeypatch.setattr(routes, "predict_pakistan_pm25", fake_multi_city_ai)
     test_client = TestClient(routes.app)
     response = test_client.post("/plan", json={
         "location": {"name": "Lahore", "latitude": 31.558, "longitude": 74.351},
-        "activity": "walk", "earliest_start_hour": 16,
+        "activity": "run", "earliest_start_hour": 16,
         "latest_finish_hour": 20, "duration_hours": 1,
     })
     assert response.status_code == 200
