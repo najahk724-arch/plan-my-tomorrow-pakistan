@@ -35,9 +35,9 @@ class PreferencesText(BaseModel):
 
 
 class ParsedPreferences(BaseModel):
-    activity: Literal["walk", "run", "cycling", "picnic"] | None = None
+    activity: Literal["run", "cycling", "picnic", "driving", "hiking", "sports", "camping"] | None = None
     earliest_start_hour: int | None = Field(default=None, ge=0, le=23)
     latest_finish_hour: int | None = Field(default=None, ge=1, le=24)
-    duration_hours: int | None = Field(default=None, ge=1, le=4)
+    duration_hours: int | None = Field(default=None, ge=1, le=24)
     avoid_rain: bool | None = None
     daylight_only: bool | None = None
