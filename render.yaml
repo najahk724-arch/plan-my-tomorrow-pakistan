@@ -1,0 +1,11 @@
+# Render Blueprint for Plan My Tomorrow — Pakistan
+# Deploy as one Python web service (frontend + FastAPI backend).
+services:
+  - type: web
+    name: plan-my-tomorrow-pakistan
+    runtime: python
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
