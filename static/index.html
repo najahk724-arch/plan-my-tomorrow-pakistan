@@ -1278,13 +1278,6 @@ function setupHours() {
 }
 
 function timeRange(window) {
-  const finish = Number(window.finish_hour);
-  return `${clock12(window.start_hour)} – ${clock12(finish)}` +
-    (finish === 24 ? " (next day)" : "");
-}
-
-
-function timeRange(window) {
   return String(window.start_hour).padStart(2, "0") + ":00 – " +
          String(window.finish_hour).padStart(2, "0") + ":00";
 }
