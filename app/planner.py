@@ -19,6 +19,8 @@ def concerns(hour: dict) -> list[str]:
         notes.append("Forecast strong wind gusts")
     if float(hour["apparent_temperature"]) >= 40:
         notes.append("Forecast very high feels-like temperature")
+    if float(hour["apparent_temperature"]) <= -20:
+        notes.append("Forecast extreme cold feels-like temperature")
     aqi = hour.get("us_aqi")
     if aqi is not None and aqi >= 151:
         notes.append("Modeled air quality in the unhealthy US AQI category")
@@ -84,18 +86,17 @@ def make_plan(request: PlanRequest, forecast: dict) -> dict:
             "start": rows[start]["time"], "finish": f"{start + request.duration_hours:02d}:00",
             "score": score, "score_meaning": "Personal preference score only",
             "feels_like_range_c": [round(min(feels), 1), round(max(feels), 1)],
-            
-    "peak_rain_probability_pct": rain,
-    "hourly_rain": [
-    {
-        "start_hour": int(h["time"][11:13]),
-        "finish_hour": int(h["time"][11:13]) + 1,
-        "chance_pct": round(float(h["precipitation_probability"])),
-        "precipitation_mm": round(float(h["precipitation"]), 1),
-    }
-    for h in segment
-],
-"peak_wind_kmh": wind,
+            "peak_rain_probability_pct": rain,
+            "hourly_rain": [
+                {
+                    "start_hour": start + i,
+                    "finish_hour": start + i + 1,
+                    "chance_pct": round(float(h["precipitation_probability"])),
+                    "precipitation_mm": round(float(h["precipitation"]), 1),
+                }
+                for i, h in enumerate(segment)
+            ],
+            "peak_wind_kmh": wind,
 
             "peak_gust_kmh": gusts, "peak_uv": uv, "peak_modeled_us_aqi": aqi,
             "comfort_excursion_c": round(temp_excursion, 1),
